@@ -4,8 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -15,6 +17,7 @@ import com.mli.crown.mine.R;
 import com.mli.crown.mine.activity.view.LoginView;
 import com.mli.crown.mine.activity.view.RegistView;
 import com.mli.crown.mine.app.MContants;
+import com.mli.crown.mine.utils.BitmapUtils;
 
 /**
  * Created by crown on 2016/7/12.
@@ -26,6 +29,7 @@ public class LoginActivity extends BaseActivity {
 	private ImageView mBackView;
 	private LoginView mLoginView;
 	private RegistView mRegistView;
+	private Bitmap mBitmap;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +40,7 @@ public class LoginActivity extends BaseActivity {
 
 	//初始化
 	private void initView() {
-
+		mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.fruit);
 		mBackView = (ImageView) findViewById(R.id.background_view);
 		mLoginView = (LoginView) findViewById(R.id.login_view);
 		mRegistView = (RegistView) findViewById(R.id.regist_view);
@@ -53,6 +57,7 @@ public class LoginActivity extends BaseActivity {
 				startLoginAnimation();
 			}
 		});
+		mBackView.setImageBitmap(mBitmap);
 
 		ViewTreeObserver observer = mLoginView.getViewTreeObserver();
 		observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -66,10 +71,26 @@ public class LoginActivity extends BaseActivity {
 	}
 
 	private void startAnimation() {
+
 		ObjectAnimator animator = ObjectAnimator.ofFloat(mLoginView, "Y", MContants.getScreenHeight(this), 0);
-		ObjectAnimator animatorAlpha = ObjectAnimator.ofFloat(mBackView, "alpha", 1.0f, 0.5f);
+		ObjectAnimator animatorAlpha = ObjectAnimator.ofFloat(mBackView, "alpha", 1.0f, 1.0f);
+
+		ValueAnimator valueAnimator = new ValueAnimator();
+		valueAnimator.setDuration(ANIMATION_DURATION * 5);
+		valueAnimator.setObjectValues(127, 0);
+		valueAnimator.setTarget(mBackView);
+		valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+			@Override
+			public void onAnimationUpdate(ValueAnimator animation) {
+				int degree = (int) animation.getAnimatedValue();
+				//proress limit 0~255
+				Log.d("color", degree + "");
+//				mBackView.setImageBitmap(BitmapUtils.handleBitmapEffect(mBitmap, 0, 0, 127));
+			}
+		});
+
 		AnimatorSet set = new AnimatorSet();
-		set.play(animator).with(animatorAlpha);
+		set.play(animator).with(valueAnimator);
 		set.setDuration(ANIMATION_DURATION);
 		set.addListener(new AnimatorListenerAdapter() {
 			@Override

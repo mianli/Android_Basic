@@ -9,7 +9,8 @@
         android:id="@+id/background_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/fruit"/>
+        android:background="@drawable/fruit"
+        android:scaleType="fitXY"/>
 
     <com.mli.crown.mine.activity.view.LoginView
         android:id="@+id/login_view"
